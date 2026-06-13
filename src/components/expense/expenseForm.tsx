@@ -1,11 +1,12 @@
 "use client";
+
 type ExpenseFormProps = {
   formData: {
     title: string;
     category: string;
     description: string;
     amount: string | number;
-    date: string; // must be string, not string | undefined
+    date: string;
   };
   onChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -21,77 +22,92 @@ export default function ExpenseForm({
   formData,
 }: ExpenseFormProps) {
   return (
-    <div className="antialiased flex flex-col items-center">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-3xl relative mx-auto">
-        <h2 className="text-xl font-bold text-left mb-6 text-black">
-          Add Your Expenses
+    <div className="flex justify-center px-3 sm:px-4">
+      <div
+        className="
+          w-full
+          max-w-xl
+          bg-white
+          rounded-2xl
+          shadow-sm
+          border border-gray-200
+          p-4 sm:p-6
+          mb-28
+        "
+      >
+        {/* Header */}
+        <h2 className="text-lg sm:text-xl font-semibold text-black mb-4">
+          Add Expense
         </h2>
+
         <form onSubmit={onSubmit} className="space-y-4">
           {/* Title */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-black">
+            <label className="block mb-1 text-xs sm:text-sm font-medium text-gray-700">
               Title
             </label>
             <input
               type="text"
               name="title"
-              placeholder="Title"
               value={formData.title}
               onChange={onChange}
-              className="w-full px-4 py-2 border border-black rounded-lg text-black"
+              placeholder="Eg: Grocery shopping"
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
               required
             />
           </div>
 
-          {/* Category */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-black">
-              Category
-            </label>
-            <input
-              type="text"
-              name="category"
-              placeholder="Category"
-              value={formData.category}
-              onChange={onChange}
-              className="w-full px-4 py-2 border border-black rounded-lg text-black"
-              required
-            />
+          {/* Category + Amount */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block mb-1 text-xs sm:text-sm font-medium text-gray-700">
+                Category
+              </label>
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={onChange}
+                placeholder="Food, Travel, Rent..."
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block mb-1 text-xs sm:text-sm font-medium text-gray-700">
+                Amount
+              </label>
+              <input
+                type="number"
+                name="amount"
+                value={formData.amount}
+                onChange={onChange}
+                placeholder="₹0"
+                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
+                required
+              />
+            </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-black">
+            <label className="block mb-1 text-xs sm:text-sm font-medium text-gray-700">
               Description
             </label>
             <textarea
               name="description"
-              placeholder="Description"
               value={formData.description}
               onChange={onChange}
-              className="w-full px-4 py-2 border border-black rounded-lg text-black"
+              placeholder="Optional notes"
+              rows={3}
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm resize-none"
             />
           </div>
 
-          {/* Amount */}
+          {/* Date */}
           <div>
-            <label className="block mb-1 text-sm font-medium text-black">
-              Amount
-            </label>
-            <input
-              type="number"
-              name="amount"
-              placeholder="Amount"
-              value={formData.amount}
-              onChange={onChange}
-              className="w-full px-4 py-2 border border-black rounded-lg text-black"
-              required
-            />
-          </div>
-
-          {/* Date Picker */}
-          <div>
-            <label className="block mb-1 text-sm font-medium text-black">
+            <label className="block mb-1 text-xs sm:text-sm font-medium text-gray-700">
               Date
             </label>
             <input
@@ -99,25 +115,25 @@ export default function ExpenseForm({
               name="date"
               value={formData.date}
               onChange={onChange}
-              className="w-full px-4 py-2 border border-black rounded-lg text-black"
+              className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm"
               required
             />
           </div>
 
-          {/* Buttons */}
-          <div className="flex gap-4 justify-center mt-6">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-            >
-              Confirm
-            </button>
+          {/* Actions */}
+          <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="bg-red-500 text-white px-4 py-2 rounded-lg"
+              className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 transition text-sm"
             >
               Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm font-medium"
+            >
+              Save Expense
             </button>
           </div>
         </form>

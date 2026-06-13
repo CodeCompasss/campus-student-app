@@ -1,4 +1,5 @@
 export type EventItem = {
+  id: string;
   title: string;
   slug: string;
   venue: string;
@@ -11,6 +12,7 @@ export type EventItem = {
 
 export const eventsData: EventItem[] = [
   {
+    id: "1",
     title: "Hackathon 1.0",
     slug: "hackathon-1",
     venue: "Main Auditorium",
@@ -22,6 +24,7 @@ export const eventsData: EventItem[] = [
     category: "tech",
   },
   {
+    id: "2",
     title: "Tech Talk: PWA Best Practices",
     slug: "pwa-best-practices",
     venue: "Seminar Hall 2",
@@ -33,6 +36,7 @@ export const eventsData: EventItem[] = [
     category: "talk",
   },
   {
+    id: "3",
     title: "Robotics Workshop",
     slug: "robotics-workshop",
     venue: "Lab 4",

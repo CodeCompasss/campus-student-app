@@ -10,7 +10,7 @@ import {
   getAttendanceStats,
   deleteSubject,
   setAttendanceStatus,
-} from "@/lib/idb";
+} from "@/lib/sc";
 
 // === AttendanceRing component ===
 function AttendanceRing({ percent }: { percent: number }) {
@@ -43,7 +43,7 @@ function AttendanceRing({ percent }: { percent: number }) {
         strokeDashoffset={offset}
         strokeLinecap="round"
         style={{
-          transition: "stroke-dashoffset 0.5s ease"
+          transition: "stroke-dashoffset 0.5s ease",
         }}
       />
       <text
@@ -65,13 +65,14 @@ function AttendanceRing({ percent }: { percent: number }) {
 function SubjectCard({
   subject,
   onRequestDelete,
-
 }: {
   subject: { id: string; name: string };
   onRequestDelete: (subject: { id: string; name: string }) => void;
   fetchSubjects: () => void;
 }) {
-  const [todayStatus, setTodayStatus] = useState<"present" | "absent" | "duty" | "loading">("loading");
+  const [todayStatus, setTodayStatus] = useState<
+    "present" | "absent" | "duty" | "loading"
+  >("loading");
   const [stats, setStats] = useState({ present: 0, total: 0, percent: 0 });
   const todayStr = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
 
@@ -83,7 +84,13 @@ function SubjectCard({
 
   const fetchTodayStatus = async () => {
     const status = await getAttendanceStatus(subject.id, todayStr);
-    setTodayStatus((status as any) === "duty" ? "duty" : (status === "present" ? "present" : "absent"));
+    setTodayStatus(
+      (status as any) === "duty"
+        ? "duty"
+        : status === "present"
+        ? "present"
+        : "absent"
+    );
   };
 
   const fetchStats = async () => {
@@ -134,32 +141,40 @@ function SubjectCard({
     >
       <div className="flex items-center gap-3 flex-1">
         <AttendanceRing percent={stats.percent || 0} />
-        <span className="text-2xl font-semibold text-gray-800">{subject.name}</span>
+        <span className="text-2xl font-semibold text-gray-800">
+          {subject.name}
+        </span>
       </div>
       <div className="flex gap-2">
         <button
           onClick={handlePresent}
-          className={`px-3 py-1 rounded transition ${todayStatus === "present"
+          className={`px-3 py-1 rounded transition ${
+            todayStatus === "present"
               ? "bg-green-500 text-white cursor-not-allowed opacity-70"
-              : "bg-gray-800 text-white hover:bg-gray-700"}`}
+              : "bg-gray-800 text-white hover:bg-gray-700"
+          }`}
           disabled={todayStatus === "present"}
         >
           Present
         </button>
         <button
           onClick={handleAbsent}
-          className={`px-3 py-1 rounded transition ${todayStatus === "absent"
+          className={`px-3 py-1 rounded transition ${
+            todayStatus === "absent"
               ? "bg-red-500 text-white cursor-not-allowed opacity-70"
-              : "bg-gray-800 text-white hover:bg-gray-700"}`}
+              : "bg-gray-800 text-white hover:bg-gray-700"
+          }`}
           disabled={todayStatus === "absent"}
         >
           Absent
         </button>
         <button
           onClick={handleDuty}
-          className={`px-3 py-1 rounded transition ${todayStatus === "duty"
+          className={`px-3 py-1 rounded transition ${
+            todayStatus === "duty"
               ? "bg-yellow-500 text-white cursor-not-allowed opacity-70"
-              : "bg-gray-800 text-white hover:bg-gray-700"}`}
+              : "bg-gray-800 text-white hover:bg-gray-700"
+          }`}
           disabled={todayStatus === "duty"}
         >
           Duty
@@ -178,11 +193,18 @@ function SubjectCard({
 // === MAIN PAGE ===
 
 export default function Home() {
-  const [subjects, setSubjects] = useState<{ id: string; name: string; todayStatus?: "present" | "absent" | "duty" }[]>([]);
+  const [subjects, setSubjects] = useState<
+    { id: string; name: string; todayStatus?: "present" | "absent" | "duty" }[]
+  >([]);
   const [newSubject, setNewSubject] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<{ id: string; name: string } | null>(null);
-  const [statusFilter, setStatusFilter] = useState<"all" | "present" | "absent" | "duty">("all");
+  const [deleteTarget, setDeleteTarget] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "present" | "absent" | "duty"
+  >("all");
   const [query, setQuery] = useState("");
 
   const fetchSubjects = async () => {
@@ -191,8 +213,13 @@ export default function Home() {
     const withStatus = await Promise.all(
       list.map(async (s: { id: string; name: string }) => {
         const st = await getAttendanceStatus(s.id, todayStr);
-        const mapped = (st as any) === "duty" ? "duty" : (st === "present" ? "present" : "absent");
-        return { ...s, todayStatus: mapped as "present"|"absent"|"duty" };
+        const mapped =
+          (st as any) === "duty"
+            ? "duty"
+            : st === "present"
+            ? "present"
+            : "absent";
+        return { ...s, todayStatus: mapped as "present" | "absent" | "duty" };
       })
     );
     setSubjects(withStatus);
@@ -221,7 +248,9 @@ export default function Home() {
 
   return (
     <main className="p-6 max-w-2xl mx-auto min-h-screen pb-24">
-      <h1 className="text-3xl font-bold mb-8 text-center text-blue-800">Attendance Tracker</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center text-blue-800">
+        Attendance Tracker
+      </h1>
 
       <div className="flex flex-wrap items-center gap-3 mb-5">
         <select
@@ -250,16 +279,18 @@ export default function Home() {
           <li className="text-center text-gray-500">No subjects yet.</li>
         )}
         {subjects
-          .filter((s) => statusFilter === "all" ? true : s.todayStatus === statusFilter)
+          .filter((s) =>
+            statusFilter === "all" ? true : s.todayStatus === statusFilter
+          )
           .filter((s) => s.name.toLowerCase().includes(query.toLowerCase()))
           .map((subj) => (
-          <SubjectCard
-            key={subj.id}
-            subject={subj}
-            onRequestDelete={setDeleteTarget}
-            fetchSubjects={fetchSubjects}
-          />
-        ))}
+            <SubjectCard
+              key={subj.id}
+              subject={subj}
+              onRequestDelete={setDeleteTarget}
+              fetchSubjects={fetchSubjects}
+            />
+          ))}
       </ul>
 
       <button
@@ -273,25 +304,31 @@ export default function Home() {
       {modalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg w-[90%] max-w-md shadow-xl">
-            <h2 className="text-xl font-semibold mb-4 text-center">Add New Subject</h2>
+            <h2 className="text-xl font-semibold mb-4 text-center">
+              Add New Subject
+            </h2>
             <input
               type="text"
               className="w-full border border-gray-300 rounded px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Enter subject name"
               value={newSubject}
-              onChange={e => setNewSubject(e.target.value)}
+              onChange={(e) => setNewSubject(e.target.value)}
               autoFocus
-              onKeyDown={e => e.key === "Enter" && handleAdd()}
+              onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             />
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setModalOpen(false)}
                 className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-              >Cancel</button>
+              >
+                Cancel
+              </button>
               <button
                 onClick={handleAdd}
                 className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >Add</button>
+              >
+                Add
+              </button>
             </div>
           </div>
         </div>
@@ -304,17 +341,22 @@ export default function Home() {
               Confirm Delete
             </h3>
             <p className="mb-6 text-center">
-              Are you sure you want to delete <strong>{deleteTarget.name}</strong> and all its attendance?
+              Are you sure you want to delete{" "}
+              <strong>{deleteTarget.name}</strong> and all its attendance?
             </p>
             <div className="flex justify-center gap-4">
               <button
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
                 onClick={() => setDeleteTarget(null)}
-              >Cancel</button>
+              >
+                Cancel
+              </button>
               <button
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                 onClick={confirmDelete}
-              >Delete</button>
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>

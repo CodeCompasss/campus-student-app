@@ -16,9 +16,9 @@ import {
   getAttendanceStatus,
   setAttendanceStatus,
   getSubjects,
-} from "@/lib/idb";
+} from "@/lib/sc";
 import toast from "react-hot-toast";
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export default function SubjectCalendarPage() {
   const { id: subjectId } = useParams();
@@ -73,7 +73,11 @@ export default function SubjectCalendarPage() {
     if (!selectedDate) return;
     await setAttendanceStatus(subject.id, selectedDate, status);
     toast.success(
-      status === "present" ? "Marked present!" : status === "duty" ? "Marked duty leave!" : "Marked absent!"
+      status === "present"
+        ? "Marked present!"
+        : status === "duty"
+        ? "Marked duty leave!"
+        : "Marked absent!"
     );
     setSelectedDayStatus(status);
   };
@@ -98,7 +102,6 @@ export default function SubjectCalendarPage() {
     const dateStr = format(day, "yyyy-MM-dd");
 
     useEffect(() => {
-      
       const fetchStatus = async () => {
         setLoading(true);
         if (isFuture(day)) {
@@ -107,11 +110,17 @@ export default function SubjectCalendarPage() {
           return;
         }
         const result = await getAttendanceStatus(subject.id, dateStr);
-        setStatusState((result as any) === "duty" ? "duty" : (result === "present" ? "present" : "absent"));
+        setStatusState(
+          (result as any) === "duty"
+            ? "duty"
+            : result === "present"
+            ? "present"
+            : "absent"
+        );
         setLoading(false);
       };
       fetchStatus();
-     
+
       // eslint-disable-next-line
     }, [currentMonth, subject.id]); // month view changes will re-render
 
@@ -125,7 +134,9 @@ export default function SubjectCalendarPage() {
     else if (status === "absent")
       bg = isSelected ? "bg-red-500 text-white" : "bg-red-100 border-red-300";
     else if (status === "duty")
-      bg = isSelected ? "bg-yellow-500 text-white" : "bg-yellow-100 border-yellow-300";
+      bg = isSelected
+        ? "bg-yellow-500 text-white"
+        : "bg-yellow-100 border-yellow-300";
     else if (status === "future")
       bg = "bg-gray-100 text-gray-400 cursor-not-allowed";
     else bg = "bg-white border-gray-300";
@@ -202,17 +213,35 @@ export default function SubjectCalendarPage() {
             ) : (
               <div className="mt-3 flex gap-3 items-center">
                 <button
-                  className={`px-4 py-2 rounded font-semibold transition ${selectedDayStatus === "present" ? "bg-green-500 text-white" : "bg-gray-700 text-white hover:bg-green-500"}`}
+                  className={`px-4 py-2 rounded font-semibold transition ${
+                    selectedDayStatus === "present"
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-700 text-white hover:bg-green-500"
+                  }`}
                   onClick={() => setStatus("present")}
-                >Present</button>
+                >
+                  Present
+                </button>
                 <button
-                  className={`px-4 py-2 rounded font-semibold transition ${selectedDayStatus === "absent" ? "bg-red-500 text-white" : "bg-gray-700 text-white hover:bg-red-500"}`}
+                  className={`px-4 py-2 rounded font-semibold transition ${
+                    selectedDayStatus === "absent"
+                      ? "bg-red-500 text-white"
+                      : "bg-gray-700 text-white hover:bg-red-500"
+                  }`}
                   onClick={() => setStatus("absent")}
-                >Absent</button>
+                >
+                  Absent
+                </button>
                 <button
-                  className={`px-4 py-2 rounded font-semibold transition ${selectedDayStatus === "duty" ? "bg-yellow-500 text-white" : "bg-gray-700 text-white hover:bg-yellow-500"}`}
+                  className={`px-4 py-2 rounded font-semibold transition ${
+                    selectedDayStatus === "duty"
+                      ? "bg-yellow-500 text-white"
+                      : "bg-gray-700 text-white hover:bg-yellow-500"
+                  }`}
                   onClick={() => setStatus("duty")}
-                >Duty</button>
+                >
+                  Duty
+                </button>
               </div>
             )}
           </div>

@@ -104,44 +104,69 @@ export default function DateSelector({ selectedDate, onDateChange }: DateSelecto
     }
   }, [dates]);
 
-  return (
-    <div
-      ref={containerRef}
-      className="flex overflow-x-auto gap-3 mt-4 px-2 scrollbar-hide text-black"
-      onScroll={onScroll}
-    >
-      {dates.map(({ day, date, month, year, iso }, i) => {
-        const isFirstOfMonth = dates[i + 1]?.date === 1;
-        const active = iso === selectedDate;
+//  
+return (
+    <div className="w-full">
+      {/* Month / Year Header */}
+      {selectedDate && (
+        <div className="sticky top-0 bg-white z-10 py-2">
+          <h2 className="text-center text-sm sm:text-base font-semibold">
+            {new Date(selectedDate).toLocaleDateString('en-US', {
+              month: 'long',
+              year: 'numeric',
+            })}
+          </h2>
+        </div>
+      )}
 
-        return (
-          <div
-            key={i}
-            className="relative flex items-center cursor-pointer"
-            onClick={() => onDateChange(iso)}
-          >
-            <div
-              className={`flex flex-col items-center justify-between border-black border-2 rounded-[21px] w-[58px] h-[91.46px] py-[11px] px-[15px] text-sm ${
-                active ? 'bg-blue-400 text-white' : ''
-              }`}
+      {/* Date scroller */}
+      <div
+        ref={containerRef}
+        onScroll={onScroll}
+        className="
+          flex
+          gap-2 sm:gap-3
+          overflow-x-auto
+          overflow-y-hidden
+          px-2 sm:px-4
+          scrollbar-hide
+        "
+      >
+        {dates.map(({ day, date, iso }) => {
+          const active = iso === selectedDate;
+
+          return (
+            <button
+              key={iso}
+              onClick={() => onDateChange(iso)}
+              className={`
+                flex-shrink-0
+                w-14 h-20 sm:w-16 sm:h-24
+                rounded-xl
+                border-2
+                flex flex-col
+                items-center
+                justify-center
+                transition-all duration-200
+                ${
+                  active
+                    ? 'bg-blue-500 text-white border-blue-500 scale-105'
+                    : 'bg-white text-black border-gray-300 hover:border-blue-400'
+                }
+              `}
             >
-              <span className="text-gray-700">{day}</span>
-              <span className="font-bold">{date}</span>
-            </div>
-
-            {isFirstOfMonth && (
-              <div className="flex flex-col justify-center items-center text-center text-xs leading-none font-semibold mt-1 pl-[12px]">
-                <div className="underline w-[54px] h-[24px] font-inter font-medium text-[20px] leading-[100%]">
-                  {month}
-                </div>
-                <div className="w-[54px] h-[19px] font-inter font-medium text-[16px] leading-[100%]">
-                  {year}
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
+              <span
+                className={`text-xs ${
+                  active ? 'text-white/80' : 'text-gray-500'
+                }`}
+              >
+                {day}
+              </span>
+              <span className="text-lg font-bold">{date}</span>
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }

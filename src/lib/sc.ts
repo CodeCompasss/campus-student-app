@@ -115,12 +115,12 @@ export const getAttendanceBySubject = async (subjectId: string) => readAttendanc
 // Retrieve attendance records for all subjects on a date
 export const getAttendanceByDate = async (date: string) => readAttendance().filter(a => a.date === date);
 
-// Get present/absent status for a subject on a date ("present" | "absent")
-export const getAttendanceStatus = async (subjectId: string, date: string) => {
+// Get attendance status for a subject on a date ("present" | "absent" | "duty" | "none")
+export const getAttendanceStatus = async (subjectId: string, date: string): Promise<"present" | "absent" | "duty" | "none"> => {
   const id = `${subjectId}_${date}`;
   const record = readAttendance().find(r => r.id === id);
-  if (!record) return "absent";
-  return (record.status as "present"|"absent"|"duty");
+  if (!record) return "none";
+  return record.status;
 };
 
 // ------ STATS

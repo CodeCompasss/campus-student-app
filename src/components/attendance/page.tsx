@@ -19,7 +19,7 @@ import {
   getAllSubjects,
   markAttendance,
   getAttendanceStatus,
-} from "@/lib/idb";
+} from "@/lib/sc";
 import toast from "react-hot-toast";
 
 export default function CommonCalendar() {
@@ -105,7 +105,8 @@ export default function CommonCalendar() {
 
   const getDayClassName = (day: Date, status: string) => {
     const baseClasses =
-      "aspect-square flex items-center justify-center rounded-full border transition transform focus:outline-none focus:ring-2 focus:ring-blue-400";
+       "aspect-square min-w-[36px] min-h-[36px] sm:min-w-[42px] sm:min-h-[42px]flex items-center justify-center rounded-full border transition focus:outline-none focus:ring-2 focus:ring-blue-400";
+
     const todayHighlight = isToday(day);
     const isSelected = selectedDate === format(day, "yyyy-MM-dd");
 
@@ -203,9 +204,7 @@ export default function CommonCalendar() {
       >
         {day.getDate()}
         {isToday(day) && (
-          <div className="text-xs mt-1">
-            {status === "present" ? "✓" : ""}
-          </div>
+          <div className="text-xs mt-1">{status === "present" ? "✓" : ""}</div>
         )}
       </button>
     );
@@ -214,26 +213,34 @@ export default function CommonCalendar() {
   // Then in your calendar render:
 
   return (
-    <section className="mt-8 bg-white rounded-xl shadow-md p-6 max-w-md mx-auto">
-      <header className="flex justify-between items-center mb-6">
-        <button
-          onClick={prevMonth}
-          aria-label="Previous month"
-          className="text-blue-600 hover:text-blue-800 transition"
-        >
-          ← Prev
-        </button>
-        <h2 className="text-2xl font-semibold text-gray-800 select-none">
-          {format(currentMonth, "MMMM yyyy")}
-        </h2>
-        <button
-          onClick={nextMonth}
-          aria-label="Next month"
-          className="text-blue-600 hover:text-blue-800 transition"
-        >
-          Next →
-        </button>
-      </header>
+    <section className="mt-6 bg-white rounded-xl shadow-md p-4 sm:p-6
+  max-w-md mx-auto mb-32">
+
+            <header className="mb-4">
+              {/* Month title centered ABOVE calendar */}
+              <h2 className="text-lg sm:text-2xl font-semibold text-center mb-3">
+                {format(currentMonth, "MMMM yyyy")}
+              </h2>
+
+              {/* Navigation buttons */}
+              <div className="flex justify-between items-center px-2">
+                <button
+                  onClick={prevMonth}
+                  className="text-blue-600 hover:text-blue-800 text-sm sm:text-base"
+                >
+                  ← Prev
+                </button>
+
+                <button
+                  onClick={nextMonth}
+                  className="text-blue-600 hover:text-blue-800 text-sm sm:text-base"
+                >
+                  Next →
+                </button>
+              </div>
+            </header>
+
+
 
       {subjects.length > 0 && (
         <div className="mb-4">
@@ -262,7 +269,8 @@ export default function CommonCalendar() {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-3 mt-2 text-center text-base">
+       <div className="grid grid-cols-7 gap-2 sm:gap-3 mt-2 text-center text-sm sm:text-base">
+
         {days.map((day) => (
           <DayButton
             key={format(day, "yyyy-MM-dd")}
@@ -302,7 +310,8 @@ export default function CommonCalendar() {
               {format(parseISO(selectedDate), "PPP")}
             </time>
           </h3>
-          <ul className="divide-y divide-gray-200 max-h-64 overflow-y-auto">
+          <ul className="divide-y divide-gray-200 max-h-56 sm:max-h-64 overflow-y-auto overscroll-contain">
+
             {subjects.length === 0 && (
               <li className="text-center py-4 text-gray-500">
                 No subjects found.
